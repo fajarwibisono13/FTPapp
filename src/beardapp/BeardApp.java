@@ -7,6 +7,7 @@
  */
 
 package beardapp;
+import com.sun.security.ntlm.Client;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,46 +31,51 @@ public class BeardApp {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String serverAddress = "ftp.raharja-net.co.id"; 
-        int port =21;
-        String username ="fajar";
-        String password = "f4jar0101";
-        
-        FTPClient fTPClient = new FTPClient();
-         
-        try {
-            fTPClient.connect(serverAddress, port);
-            fTPClient.login(username, password);
-            fTPClient.enterLocalPassiveMode();
-            fTPClient.setFileType(FTP.BINARY_FILE_TYPE/FTP.ASCII_FILE_TYPE);
-           String remoteFilePath = "/mitracomm2/201811/20181127/2000_PDAM_KOTA_SOLO_20181127.ftr";
-            File localfile = new File("D:/FTP/2000_PDAM_KOTA_SOLO_20181127.ftr");
-            OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(localfile));
-            boolean success = fTPClient.retrieveFile(remoteFilePath, outputStream);
-            outputStream.close();
-  
-            if (success) {
-                System.out.println("Ftp file successfully download.");
-            }
-            
-            
-        } catch (Exception e) {
-            System.out.println("Error occurs in downloading files from ftp Server : " + e.getMessage());
-        }
-         finally{
-            try {
-                 if (fTPClient.isConnected()){
-                        fTPClient.logout();
-                        fTPClient.disconnect();
-                    }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-                   
-        }
-        
-        
-        // TODO code application logic here
-    }
-    
+                    
+		String server = "ftp.raharja-net.co.id";
+		int port = 21;
+		String user = "fajar";
+		String pass = "f4jar0101";
+		FTPClient ftpClient = new FTPClient();
+		try {
+
+			ftpClient.connect(server, port);
+			ftpClient.login(user, pass);
+			ftpClient.enterLocalPassiveMode();
+			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+
+	        String remoteFile2 = "/mitracomm2/201811/20181127/2000_PDAM_KOTA_SOLO_20181127.ftr";
+	        File downloadFile2 = new File("D:/FTP/2000_PDAM_KOTA_SOLO_20181127.ftr");
+	        OutputStream outputStream2 = new BufferedOutputStream(new FileOutputStream(downloadFile2));
+	        InputStream inputStream = ftpClient.retrieveFileStream(remoteFile2);
+                int returnCode = ftpClient.getReplyCode();
+                
+	        byte[] bytesArray = new byte[4096];
+	        int bytesRead = -1;
+	        while ((bytesRead = inputStream.read(bytesArray)) != -1) {
+	        	outputStream2.write(bytesArray, 0, bytesRead);
+	        }
+
+	 
+			if (inputStream != null || returnCode != 550) {
+                            ftpClient.completePendingCommand();	
+                            System.out.println("File nya Udah Ke Download.");
+			} 
+			outputStream2.close();
+			inputStream.close();
+
+		} catch (IOException ex) {
+			System.out.println("Error: " + ex.getMessage());
+			ex.printStackTrace();
+		} finally {
+			try {
+				if (ftpClient.isConnected()) {
+					ftpClient.logout();
+					ftpClient.disconnect();
+				}
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
 }
