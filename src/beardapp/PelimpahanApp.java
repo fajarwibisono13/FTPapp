@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import javax.swing.JComboBox;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import javax.swing.JOptionPane;
@@ -22,7 +23,10 @@ import javax.swing.JOptionPane;
  */
 public class PelimpahanApp extends javax.swing.JFrame {
     
-    String tglinput;
+    String bulan;
+    String tanggal;
+    String lengkap = bulan + tanggal;
+    
     
     public void download(){
     String server = "ftp.raharja-net.co.id";
@@ -36,9 +40,11 @@ public class PelimpahanApp extends javax.swing.JFrame {
 			ftpClient.login(user, pass);
 			ftpClient.enterLocalPassiveMode();
 			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-
-	        String remoteFile2 = "/mitracomm2/201811/20181127/2006_PDAM_KOTA_MALANG_20181127.ftr";
-	        File downloadFile2 = new File("D:/FTP/2006_PDAM_KOTA_MALANG_20181127.ftr");
+                        
+                 String remoteFile2 = ("/" + scid +"/" + bulan +"/"+ tanggal +"/2000_PDAM_KOTA_SOLO_20181127.ftr");
+              //  String remoteFile2 = ("/mitracomm2/" + bulan + tanggal + "/2006_PDAM_KOTA_MALANG_20181127.ftr");
+	       // String remoteFile2 = "/mitracomm2/201811/20181127/2006_PDAM_KOTA_MALANG_20181127.ftr";
+	        File downloadFile2 = new File("D:/FTP/2000_PDAM_KOTA_SOLO_20181127.ftr");
 	        OutputStream outputStream2 = new BufferedOutputStream(new FileOutputStream(downloadFile2));
 	        InputStream inputStream = ftpClient.retrieveFileStream(remoteFile2);
                 int returnCode = ftpClient.getReplyCode();
@@ -84,6 +90,7 @@ public class PelimpahanApp extends javax.swing.JFrame {
     public PelimpahanApp() {
         
         initComponents();
+        
     }
 
     /**
@@ -95,13 +102,18 @@ public class PelimpahanApp extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jComboBox1 = new javax.swing.JComboBox<>();
+        scid = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
         tgl = new com.toedter.calendar.JDateChooser();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mitracomm2" }));
+        scid.setToolTipText("");
+        scid.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                scidPropertyChange(evt);
+            }
+        });
 
         jButton1.setText("Download");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -120,26 +132,26 @@ public class PelimpahanApp extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(80, 80, 80)
-                .addComponent(jButton1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(tgl, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE))
+                .addComponent(scid, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(tgl, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(97, 97, 97))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tgl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(scid, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                    .addComponent(tgl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addComponent(jButton1)
-                .addContainerGap(55, Short.MAX_VALUE))
+                .addGap(26, 26, 26))
         );
 
         pack();
@@ -148,19 +160,41 @@ public class PelimpahanApp extends javax.swing.JFrame {
     private void tglPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tglPropertyChange
         // TODO add your handling code here:
         if (tgl.getDate() != null) {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            tglinput=format.format(tgl.getDate());
-            System.out.println(tgl);
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMM");
+            bulan=format.format(tgl.getDate());
+            SimpleDateFormat format2 = new  SimpleDateFormat("yyyyMMdd");
+            tanggal = format2.format(tgl.getDate());
+            System.out.println(bulan);
+            System.out.println(tanggal);
             
         }
+        
+        /*if (tgl.getDate() != null) {
+            SimpleDateFormat format2 = new SimpleDateFormat("yyyyMMdd");
+            tanggal=format2.format(tgl.getDate());
+            System.out.println(tanggal);
+            
+        }*/
     }//GEN-LAST:event_tglPropertyChange
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        
         download();
+  
         
         
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void scidPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_scidPropertyChange
+        // TODO add your handling code here:
+          JComboBox  scid = new  JComboBox();
+        scid.addItem("mitracomm2");
+        scid.addItem("DJI");
+        scid.setSelectedItem(null);
+        
+      
+    }//GEN-LAST:event_scidPropertyChange
 
     /**
      * @param args the command line arguments
@@ -202,7 +236,7 @@ public class PelimpahanApp extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> scid;
     private com.toedter.calendar.JDateChooser tgl;
     // End of variables declaration//GEN-END:variables
 }
