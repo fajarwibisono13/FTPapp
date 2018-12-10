@@ -41,29 +41,85 @@ public class PelimpahanApp extends javax.swing.JFrame {
 			ftpClient.enterLocalPassiveMode();
 			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
                         
-                 String remoteFile2 = ("/" + scid +"/" + bulan +"/"+ tanggal +"/2000_PDAM_KOTA_SOLO_20181127.ftr");
-              //  String remoteFile2 = ("/mitracomm2/" + bulan + tanggal + "/2006_PDAM_KOTA_MALANG_20181127.ftr");
-	       // String remoteFile2 = "/mitracomm2/201811/20181127/2006_PDAM_KOTA_MALANG_20181127.ftr";
-	        File downloadFile2 = new File("D:/FTP/2000_PDAM_KOTA_SOLO_20181127.ftr");
-	        OutputStream outputStream2 = new BufferedOutputStream(new FileOutputStream(downloadFile2));
-	        InputStream inputStream = ftpClient.retrieveFileStream(remoteFile2);
+                //PDAM DUMMY  
+                    String remoteFile2 = ("/mitracomm2/" + bulan +"/"+ tanggal +"/2000_PDAM_KOTA_SOLO_" + tanggal + ".ftr");
+                     File downloadFile2 = new File("D:/FTP/2000_PDAM_KOTA_SOLO_20181127.ftr");
+                     OutputStream outputStream2 = new BufferedOutputStream(new FileOutputStream(downloadFile2));
+                     InputStream inputStream = ftpClient.retrieveFileStream(remoteFile2);
+                     
                 int returnCode = ftpClient.getReplyCode();
-                
-	        byte[] bytesArray = new byte[4096];
+                byte[] bytesArray = new byte[4096];
 	        int bytesRead = -1;
 	        while ((bytesRead = inputStream.read(bytesArray)) != -1) {
-	        	outputStream2.write(bytesArray, 0, bytesRead);
-	        }
-
-	 
-			if (inputStream != null || returnCode != 550) {
+	       outputStream2.write(bytesArray, 0, bytesRead);
+	        }if (inputStream != null || returnCode != 550) {
                             ftpClient.completePendingCommand();	
-                            System.out.println("File nya Udah Ke Download.");
-                            JOptionPane.showMessageDialog(null, "File nya Udah Ke Download.");
+                            System.out.println("Dummy udahke download");
+                           // JOptionPane.showMessageDialog(null, "File nya Udah Ke Download.");
                             
 			} 
 			outputStream2.close();
 			inputStream.close();
+                
+//----------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------
+                        
+                        
+                
+                //PDAM PALYJA
+                    String remotePalyja = ("/mitracomm/BRI_SYARIAH/" + bulan +"/RAHARJA_PALYJA_" + tanggal + ".txt");
+                    File downloadPalyja= new File("D:/FTP/RAHARJA_PALYJA_"+ tanggal + ".txt");
+                    OutputStream outputStreamPalyja = new BufferedOutputStream(new FileOutputStream(downloadPalyja));
+                    InputStream inputStreamPalyja = ftpClient.retrieveFileStream(remotePalyja);
+            
+                     int returnCodePalyja = ftpClient.getReplyCode();
+                     byte[] bytesArrayPalyja = new byte[4096];
+                     int bytesReadPalyja = -1;
+                     while ((bytesReadPalyja = inputStreamPalyja.read(bytesArrayPalyja)) != -1) {
+                     outputStreamPalyja.write(bytesArrayPalyja, 0, bytesReadPalyja);
+	        }
+			if (inputStreamPalyja != null || returnCodePalyja != 550) {
+                            ftpClient.completePendingCommand();	
+                            System.out.println("Palyja Udah Ke Download.");
+			} 
+                        else{ System.out.println("Palyja Ga ada.");
+                        }
+			outputStreamPalyja.close();
+			inputStreamPalyja.close();
+                        
+                        
+//----------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------
+
+
+
+
+                //PDAM AETRA
+                    String remoteAetra = ("/mitracomm/BRI_SYARIAH/" + bulan +"/RAHARJA_AETRA_" + tanggal + ".txt");
+                    File downloadAetra= new File("D:/FTP/RAHARJA_AETRA_"+ tanggal + ".txt");
+                    OutputStream outputStreamAetra = new BufferedOutputStream(new FileOutputStream(downloadAetra));
+                    InputStream inputStreamAetra = ftpClient.retrieveFileStream(remoteAetra);
+            
+                     int returnCodeAetra = ftpClient.getReplyCode();
+                     byte[] bytesArrayAetra = new byte[4096];
+                     int bytesReadAetra = -1;
+                     while ((bytesReadAetra = inputStreamAetra.read(bytesArrayAetra)) != -1) {
+                     outputStreamAetra.write(bytesArrayAetra, 0, bytesReadAetra);
+	        }
+			if (inputStreamAetra != null || returnCodeAetra != 550) {
+                            ftpClient.completePendingCommand();	
+                            System.out.println("Aetra Udah Ke Download.");
+			} 
+			outputStreamAetra.close();
+			inputStreamAetra.close();
+                        
+                        
+//----------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------
+                
+
+
+                        
 
 		} catch (IOException ex) {
 			System.out.println("Error: " + ex.getMessage());
@@ -108,7 +164,13 @@ public class PelimpahanApp extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        scid.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "PDAM BRIS", "DJI" }));
         scid.setToolTipText("");
+        scid.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                scidActionPerformed(evt);
+            }
+        });
         scid.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 scidPropertyChange(evt);
@@ -134,13 +196,13 @@ public class PelimpahanApp extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scid, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(scid, 0, 138, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(tgl, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(115, 115, 115)
                 .addComponent(jButton1)
-                .addGap(97, 97, 97))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -149,9 +211,9 @@ public class PelimpahanApp extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(scid, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
                     .addComponent(tgl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(jButton1)
-                .addGap(26, 26, 26))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -188,13 +250,15 @@ public class PelimpahanApp extends javax.swing.JFrame {
 
     private void scidPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_scidPropertyChange
         // TODO add your handling code here:
-          JComboBox  scid = new  JComboBox();
-        scid.addItem("mitracomm2");
-        scid.addItem("DJI");
-        scid.setSelectedItem(null);
+    String SCID = scid.getSelectedItem().toString();
+    
         
       
     }//GEN-LAST:event_scidPropertyChange
+
+    private void scidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scidActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_scidActionPerformed
 
     /**
      * @param args the command line arguments
