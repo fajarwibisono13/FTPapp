@@ -6,16 +6,24 @@
 package beardapp;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.LineNumberInputStream;
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import javax.swing.JComboBox;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import javax.swing.JOptionPane;
+
 
 /**
  *
@@ -29,13 +37,14 @@ public class PelimpahanApp extends javax.swing.JFrame {
     
     
     public void download(){
+    int infopalyja = 0;
+    int infoaetra = 0;
     String server = "ftp.raharja-net.co.id";
 		int port = 21;
 		String user = "fajar";
 		String pass = "f4jar0101";
 		FTPClient ftpClient = new FTPClient();
 		try {
-
 			ftpClient.connect(server, port);
 			ftpClient.login(user, pass);
 			ftpClient.enterLocalPassiveMode();
@@ -82,9 +91,11 @@ public class PelimpahanApp extends javax.swing.JFrame {
 			if (inputStreamPalyja != null || returnCodePalyja != 550) {
                             ftpClient.completePendingCommand();	
                             System.out.println("Palyja Udah Ke Download.");
+                            infopalyja = 1;
 			} 
                         else{ System.out.println("Palyja Ga ada.");
                         }
+                      
 			outputStreamPalyja.close();
 			inputStreamPalyja.close();
                         
@@ -110,6 +121,7 @@ public class PelimpahanApp extends javax.swing.JFrame {
 			if (inputStreamAetra != null || returnCodeAetra != 550) {
                             ftpClient.completePendingCommand();	
                             System.out.println("Aetra Udah Ke Download.");
+                            infoaetra = 1;
 			} 
 			outputStreamAetra.close();
 			inputStreamAetra.close();
@@ -119,9 +131,20 @@ public class PelimpahanApp extends javax.swing.JFrame {
 //-----------------------------------------------------------------------------------------
                 
 
-
-                        
-
+                    //Pemberitahuan 
+                    try {
+                          if (infopalyja == 1 || infoaetra ==1) {
+                        JOptionPane.showMessageDialog(null, "Semua File Sudah ke Download"); 
+                           }     
+                          else 
+                          {
+                             JOptionPane.showMessageDialog(null,"Masih Ada Data yang belum terdownload","Download Gagal",JOptionPane.WARNING_MESSAGE);
+                          }
+                    } 
+                      catch (Exception e) { 
+                    }
+       
+                  
 		} catch (IOException ex) {
 			System.out.println("Error: " + ex.getMessage());
 			ex.printStackTrace();
@@ -139,7 +162,48 @@ public class PelimpahanApp extends javax.swing.JFrame {
         
     
    
-
+    public void line(){
+    
+       String filePath = "D:/FTP/RAHARJA_PALYJA_"+ tanggal + ".txt"; 
+       String filePath2 = "D:/FTP/RAHARJA_AETRA_"+ tanggal + ".txt"; 
+       int rowpalyja;
+       int rowaetra;
+       String PdamPalyja;
+       String PdamAetra;
+        try {
+            LineNumberReader lineReader = new LineNumberReader(new FileReader(filePath));
+             String lineText = null;
+          while ((lineText = lineReader.readLine()) != null) {
+            //  System.out.println(lineReader.getLineNumber() + ": " + lineText);
+                        }
+                rowpalyja = lineReader.getLineNumber();
+                PdamPalyja = Integer.toString(rowpalyja);
+                jumlahPalyja.setText(PdamPalyja);
+                lineReader.close();
+             } 
+        catch (IOException ex) {
+              System.err.println(ex);
+              JOptionPane.showMessageDialog(null,"FILE PDAM AETRA TIDAK ADA","Data Missing",JOptionPane.WARNING_MESSAGE);
+            }
+ 
+        
+        try {
+            LineNumberReader lineReader2 = new LineNumberReader(new FileReader(filePath2));
+             String lineText = null;
+          while ((lineText = lineReader2.readLine()) != null) {
+            //  System.out.println(lineReader.getLineNumber() + ": " + lineText);
+                        }
+                rowaetra = lineReader2.getLineNumber();
+                PdamAetra = Integer.toString(rowaetra);
+                jumlahAetra.setText(PdamAetra);
+                lineReader2.close();
+             } 
+        
+        catch (IOException ex) {
+              System.err.println(ex);
+              JOptionPane.showMessageDialog(null,"FILE PDAM AETRA TIDAK ADA","Data Missing",JOptionPane.WARNING_MESSAGE);
+            }
+  }
 
     /**
      * Creates new form NewJFrame
@@ -166,12 +230,13 @@ public class PelimpahanApp extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        jumlahAetra = new javax.swing.JLabel();
         jumlahPalyja = new javax.swing.JLabel();
+        cekrow = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        scid.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "PDAM BRIS", "DJI" }));
+        scid.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "PDAM BRIS", "PDAM MANDIRI", "PDAM BNI", " " }));
         scid.setToolTipText("");
         scid.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -197,47 +262,57 @@ public class PelimpahanApp extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("PDAM AETRA");
+        jLabel1.setText("UNKNOWN");
 
-        jLabel2.setText("PDAM PALYJA");
+        jLabel2.setText("UNKNOWN");
 
         jLabel3.setText(":");
 
         jLabel4.setText(":");
 
-        jLabel5.setText(".....");
+        jumlahAetra.setText(".....");
 
         jumlahPalyja.setText(".....");
+
+        cekrow.setText("Check Row");
+        cekrow.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cekrowActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(cekrow))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jumlahPalyja)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel4)))
+                .addGap(18, 18, 18)
+                .addComponent(jumlahPalyja)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(scid, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(tgl, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton1))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel5)))
-                        .addGap(0, 7, Short.MAX_VALUE))))
+                        .addComponent(scid, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(tgl, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jumlahAetra)
+                        .addGap(241, 241, 241)))
+                .addGap(0, 17, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -249,15 +324,17 @@ public class PelimpahanApp extends javax.swing.JFrame {
                     .addComponent(tgl, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel5))
+                    .addComponent(jumlahAetra)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel4)
                     .addComponent(jumlahPalyja))
-                .addContainerGap(114, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 80, Short.MAX_VALUE)
+                .addComponent(cekrow)
+                .addContainerGap())
         );
 
         pack();
@@ -294,7 +371,29 @@ public class PelimpahanApp extends javax.swing.JFrame {
 
     private void scidPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_scidPropertyChange
         // TODO add your handling code here:
-    String SCID = scid.getSelectedItem().toString();
+
+        String SCID = scid.getSelectedItem().toString();
+       
+        try {   
+
+                if (SCID == "PDAM BRIS") {    
+                jLabel1.setText("PDAM AETRA");
+                jLabel2.setText("PDAM PALYJA");
+                 }
+                else if(SCID == "PDAM MANDIRI"){
+                jLabel1.setText("UNKNOWN");
+                jLabel2.setText("UNKNOWN");
+                System.out.println(SCID);      
+                }
+                else
+                {
+                
+                }
+            
+        } catch (Exception e) {
+        }
+
+        
     
         
       
@@ -303,6 +402,11 @@ public class PelimpahanApp extends javax.swing.JFrame {
     private void scidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scidActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_scidActionPerformed
+
+    private void cekrowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cekrowActionPerformed
+        // TODO add your handling code here:
+        line();
+    }//GEN-LAST:event_cekrowActionPerformed
 
     /**
      * @param args the command line arguments
@@ -343,12 +447,13 @@ public class PelimpahanApp extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cekrow;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jumlahAetra;
     private javax.swing.JLabel jumlahPalyja;
     private javax.swing.JComboBox<String> scid;
     private com.toedter.calendar.JDateChooser tgl;
